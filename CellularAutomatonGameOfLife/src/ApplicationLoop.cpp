@@ -15,7 +15,7 @@ const unsigned int SCREEN_WIDTH = 800;
 // The height of the screen
 const unsigned int SCREEN_HEIGHT = 600;
 
-Core::Simulator Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
+Core::Simulator GameOfLife(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[])
 {
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 #endif
     glfwWindowHint(GLFW_RESIZABLE, false);
 
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "GameOfLife", nullptr, nullptr);
     glfwMakeContextCurrent(window);
 
     // glad: load all OpenGL function pointers
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
     // initialize game
     // ---------------
-    Breakout.Init();
+    GameOfLife.Init();
 
     // deltaTime variables
     // -------------------
@@ -68,17 +68,17 @@ int main(int argc, char* argv[])
 
         // manage user input
         // -----------------
-        Breakout.ProcessInput(deltaTime);
+        GameOfLife.ProcessInput(deltaTime);
 
         // update game state
         // -----------------
-        Breakout.Update(deltaTime);
+        GameOfLife.Update(deltaTime);
 
         // render
         // ------
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        Breakout.Render();
+        GameOfLife.Render();
 
         glfwSwapBuffers(window);
     }
@@ -99,9 +99,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            Breakout.Keys[key] = true;
+            GameOfLife.Keys[key] = true;
         else if (action == GLFW_RELEASE)
-            Breakout.Keys[key] = false;
+            GameOfLife.Keys[key] = false;
     }
 }
 

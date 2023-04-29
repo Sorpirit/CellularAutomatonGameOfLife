@@ -142,16 +142,24 @@
     <ClCompile Include="src\Core\Simulator.cpp" />
     <ClCompile Include="src\Core\SimulatorState.cpp" />
     <ClCompile Include="lib\glad.c" />
+    <ClCompile Include="src\Core\World.cpp" />
     <ClCompile Include="src\Render\ResourceManager.cpp" />
     <ClCompile Include="src\Render\Shader.cpp" />
     <ClCompile Include="src\Render\Texture2D.cpp" />
+    <ClCompile Include="src\Render\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Simulator.hpp" />
     <ClInclude Include="src\Core\SimulatorState.h" />
+    <ClInclude Include="src\Core\World.hpp" />
     <ClInclude Include="src\Render\ResourceManager.hpp" />
     <ClInclude Include="src\Render\Shader.hpp" />
     <ClInclude Include="src\Render\Texture2D.hpp" />
+    <ClInclude Include="src\Render\WorldRenderer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Render\Shaders\fragment.frag" />
+    <None Include="src\Render\Shaders\vertex.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "SimulatorState.h"
+#include "../Render/WorldRenderer.hpp"
+#include "../Render/ResourceManager.hpp"
 
 namespace Core
 {
@@ -19,5 +21,8 @@ namespace Core
         void ProcessInput(float dt);
         void Update(float dt);
         void Render();
+    private:
+        Render::WorldRenderer* _render;
+        World _world;
     };
 }
