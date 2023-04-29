@@ -34,17 +34,31 @@ namespace Core
 	template <typename T>
 	T World<T>::GetCell(int x, int y)
 	{
+		x = x % _width;
+		y = y % _height;
+
+		if (x < 0)
+			x = _width + x;
+
+		if (y < 0)
+			y = _height + y;
+
 		int offset = (x + y * _width);
-		return *(_writeBuffer + offset);
+		return *(_readBuffer + offset);
 	}
 
 	template <typename T>
 	void World<T>::Swap()
 	{
-		memcpy(_readBuffer, _writeBuffer, sizeof(_writeBuffer));
-		unsigned char* tmp = _readBuffer;
+		auto tmp = _readBuffer;
 		_readBuffer = _writeBuffer;
 		_writeBuffer = tmp;
+	}
+
+	template <typename T>
+	void World<T>::ApplyData()
+	{
+		memcpy(_readBuffer, _writeBuffer, _width * _height * _stride);
 	}
 
 	template <typename T>

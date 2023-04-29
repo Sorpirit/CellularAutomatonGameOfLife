@@ -3,7 +3,7 @@
 #include "../Render/WorldRenderer.hpp"
 #include "../Render/ResourceManager.hpp"
 #include "Cell.hpp"
-#include "World.cpp"
+#include "World.hpp"
 
 namespace Core
 {
@@ -26,5 +26,6 @@ namespace Core
     private:
         Render::WorldRenderer* _render;
         World<Cell> _world;
+        float _generationTimer;
     };
 }

@@ -16,6 +16,8 @@ namespace Render
 
 	void WorldRenderer::Render()
 	{
+        _outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
+
         _shader.Use();
         _shader.SetInteger("image", 0);
         _shader.SetVector3f("spriteColor", {1, 1, 1});
@@ -37,9 +39,7 @@ namespace Render
         _outputTexture.Filter_Min = GL_NEAREST;
         _outputTexture.Internal_Format = GL_R8UI;
         _outputTexture.Image_Format = GL_RED_INTEGER;
-        auto buffer = _world->GetCurrentBuffer();
-        int d = _world->GetWidth();
-        _outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), buffer);
+        //_outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
         
 
         // configure VAO/VBO
@@ -66,12 +66,5 @@ namespace Render
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        
-        //_outputTexture.Generate()
-
-        //_outputTexture.Wrap_S = GL_CLAMP_TO_BORDER;
-        //_outputTexture.Wrap_T = GL_CLAMP_TO_BORDER;
-        
 	}
 }

@@ -1,21 +1,50 @@
 #include "Simulator.hpp"
+#include <cstdlib>
+#include <iostream>
+#include <tuple>
+#include "World.cpp"
+
+using namespace std;
 
 namespace Core
 {
-    Simulator::Simulator(unsigned int width, unsigned int height)
-        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(4, 4)
-    {
-        Cell fullCell;
-        fullCell.Data = UCHAR_MAX;
+    static tuple<int, int> neighborDirections[] = {
+	    make_tuple(-1, 1),
+	    make_tuple(0, 1),
+	    make_tuple(1, 1),
+	    make_tuple(1, 0),
+	    make_tuple(1, -1),
+	    make_tuple(0, -1),
+	    make_tuple(-1, -1),
+	    make_tuple(-1, 0),
+    };
 
-        Cell emptyCell;
-        emptyCell.Data = 0;
+    Simulator::Simulator(unsigned int width, unsigned int height)
+        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(100, 100), _generationTimer(0)
+    {
+        Cell fullCell { UCHAR_MAX };
+        Cell emptyCell { 0 };
+
+        
+
+        /*for (int i = 0; i < _world.GetWidth(); ++i)
+        {
+            for (int j = 0; j < _world.GetHeight(); ++j)
+            {
+                _world.SetCell(i, j, emptyCell);
+            }
+        }
+
+        _world.SetCell(1, 2, fullCell);
+        _world.SetCell(2, 2, fullCell);
+        _world.SetCell(3, 2, fullCell);
+        _world.ApplyData();*/
 
         for (int i = 0; i < _world.GetWidth(); ++i)
         {
 	        for (int j = 0; j < _world.GetHeight(); ++j)
 	        {
-                _world.SetCell(i, j, (i + j) % 2 == 0 ? fullCell : emptyCell);
+                _world.SetCell(i, j, rand() % 2 == 0 ? fullCell : emptyCell);
 	        }
         }
     }
@@ -36,14 +65,57 @@ namespace Core
 
     void Simulator::Update(float dt)
     {
-        //_world.Swap();
-        /*for (int i = 0; i < _world.GetWidth(); ++i)
+        _generationTimer += dt;
+
+        if(_generationTimer <= 0.12)
+            return;
+
+        _generationTimer = 0;
+        _world.Swap();
+
+        Cell fullCell{ UCHAR_MAX };
+        Cell emptyCell{ 0 };
+        int neighborAmount = 0;
+
+        for (int i = 0; i < _world.GetWidth(); ++i)
         {
             for (int j = 0; j < _world.GetHeight(); ++j)
             {
-                _world.SetPixel(i, j, (i + j) % 2 == 0 ? fullByteBuffer : emptyByteBuffer);
+                neighborAmount = 0;
+                for (const auto& dir : neighborDirections) {
+                    int neighborX = i + std::get<0>(dir);
+                    int neighborY = j + std::get<1>(dir);
+                    const Cell neighbor = _world.GetCell(neighborX, neighborY);
+                    if (neighbor.Data == fullCell.Data)
+                        neighborAmount++;
+                }
+
+                bool isCellFull = _world.GetCell(i, j).Data == fullCell.Data;
+
+                if(isCellFull)
+                {
+                    if (neighborAmount >= 2 && neighborAmount <= 3)
+                    {
+                        _world.SetCell(i, j, fullCell);
+                    }
+                    else
+                    {
+                        _world.SetCell(i, j, emptyCell);
+                    }
+                }
+            	else
+                {
+                    if (neighborAmount == 3)
+                    {
+                        _world.SetCell(i, j, fullCell);
+                    }
+                    else
+                    {
+                        _world.SetCell(i, j, emptyCell);
+                    }
+                }
             }
-        }*/
+        }
     }
 
     void Simulator::ProcessInput(float dt)
