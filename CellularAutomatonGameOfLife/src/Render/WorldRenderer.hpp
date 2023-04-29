@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "../Core/World.hpp"
+#include "../Core/WorldBase.hpp"
 #include "Shader.hpp"
+#include "Texture2D.hpp"
 
 namespace Render
 {
@@ -8,13 +9,13 @@ namespace Render
 	{
 	public:
 
-		WorldRenderer(Core::World* world, Shader &shader);
+		WorldRenderer(Core::WorldBase* world, Shader &shader);
 		~WorldRenderer();
 
 		void Render();
 	private:
 		Shader _shader;
-		Core::World* _world;
+		Core::WorldBase* _world;
 		Texture2D _outputTexture;
 		unsigned int _quadVAO;
 

@@ -1,45 +1,45 @@
 ﻿#include "World.hpp"
 
 #include <iostream>
-#include <stdexcept>
-#include <cstdio>
 #include <cstring>
 
 namespace Core
 {
-	World::World(int width, int height, int stride)
+	template<typename T>
+	World<T>::World(int width, int height)
 	{
 		_width = width;
 		_height = height;
-		_stride = stride;
-		_writeBuffer = new unsigned char[width * height * stride];
-		_readBuffer = new unsigned char[width * height * stride];
-		memset(_writeBuffer, 0, stride * width * height);
-		memset(_readBuffer, 0, stride * width * height);
+		_stride = sizeof(T);
+		_writeBuffer = new T[width * height];
+		_readBuffer = new T[width * height];
+
+		//todo default init of the buffers
 	}
 
-	World::~World()
+	template<typename T>
+	World<T>::~World()
 	{
 		delete[] _writeBuffer;
 		delete[] _readBuffer;
 	}
 
-	void World::SetPixel(int x, int y, const unsigned char* data)
+	template <typename T>
+	void World<T>::SetCell(int x, int y, const T data)
 	{
 		int offset = (x + y * _width);
-		memcpy(_writeBuffer + offset, data, _stride);
+		*(_writeBuffer + offset) = data;
 	}
 
-	unsigned char* World::GetPixel(int x, int y)
+	template <typename T>
+	T World<T>::GetCell(int x, int y)
 	{
-		auto result = new unsigned char[_stride];
-
-		memcpy(result, _readBuffer + (x + y * _width), _stride);
-
-		return result;
+		int offset = (x + y * _width);
+		return *(_writeBuffer + offset);
 	}
 
-	void World::Swap()
+	template <typename T>
+	void World<T>::Swap()
 	{
 		memcpy(_readBuffer, _writeBuffer, sizeof(_writeBuffer));
 		unsigned char* tmp = _readBuffer;
@@ -47,8 +47,9 @@ namespace Core
 		_writeBuffer = tmp;
 	}
 
-	unsigned char* World::GetCurrentBuffer()
+	template <typename T>
+	unsigned char* World<T>::GetCurrentBuffer()
 	{
-		return _writeBuffer;
+		return reinterpret_cast<unsigned char*>(_writeBuffer);
 	}
 }

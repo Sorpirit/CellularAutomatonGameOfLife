@@ -1,28 +1,22 @@
 ﻿#pragma once
-
-#include "../Render/Texture2D.hpp"
+#include "WorldBase.hpp"
 
 namespace Core
 {
-	class World
+	template<typename T>
+	class World : public WorldBase
 	{
 	public:
-		World(int width, int height, int stride);
+		World(int width, int height);
 		~World();
 
-		inline int GetWidth() { return _width; }
-		inline int GetHeight() { return _height; }
-
-		void SetPixel(int x, int y, const unsigned char* data);
-		unsigned char* GetPixel(int x, int y);
+		void SetCell(int x, int y, const T data);
+		T GetCell(int x, int y);
 		void Swap();
 
-		unsigned char* GetCurrentBuffer();
+		unsigned char* GetCurrentBuffer() override;
 	private:
-		unsigned char* _readBuffer;
-		unsigned char* _writeBuffer;
-		int _width;
-		int _height;
-		int _stride;
+		T* _readBuffer;
+		T* _writeBuffer;
 	};
 }

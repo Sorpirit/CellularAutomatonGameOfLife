@@ -149,9 +149,11 @@
     <ClCompile Include="src\Render\WorldRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Cell.hpp" />
     <ClInclude Include="src\Core\Simulator.hpp" />
     <ClInclude Include="src\Core\SimulatorState.h" />
     <ClInclude Include="src\Core\World.hpp" />
+    <ClInclude Include="src\Core\WorldBase.hpp" />
     <ClInclude Include="src\Render\ResourceManager.hpp" />
     <ClInclude Include="src\Render\Shader.hpp" />
     <ClInclude Include="src\Render\Texture2D.hpp" />

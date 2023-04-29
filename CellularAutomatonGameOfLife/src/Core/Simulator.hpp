@@ -2,6 +2,8 @@
 #include "SimulatorState.h"
 #include "../Render/WorldRenderer.hpp"
 #include "../Render/ResourceManager.hpp"
+#include "Cell.hpp"
+#include "World.cpp"
 
 namespace Core
 {
@@ -23,6 +25,6 @@ namespace Core
         void Render();
     private:
         Render::WorldRenderer* _render;
-        World _world;
+        World<Cell> _world;
     };
 }

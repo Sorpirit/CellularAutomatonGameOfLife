@@ -2,28 +2,20 @@
 
 namespace Core
 {
-    struct Cell
-    {
-        unsigned char Data;
-    };
-
-
     Simulator::Simulator(unsigned int width, unsigned int height)
-        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(4, 4, 1)
+        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(4, 4)
     {
         Cell fullCell;
         fullCell.Data = UCHAR_MAX;
-        unsigned char const* fullByteBuffer = reinterpret_cast<unsigned char const*>(&fullCell);
 
         Cell emptyCell;
         emptyCell.Data = 0;
-        unsigned char const* emptyByteBuffer = reinterpret_cast<unsigned char const*>(&emptyCell);
 
         for (int i = 0; i < _world.GetWidth(); ++i)
         {
 	        for (int j = 0; j < _world.GetHeight(); ++j)
 	        {
-                _world.SetPixel(i, j, (i + j) % 2 == 0 ? fullByteBuffer : emptyByteBuffer);
+                _world.SetCell(i, j, (i + j) % 2 == 0 ? fullCell : emptyCell);
 	        }
         }
     }

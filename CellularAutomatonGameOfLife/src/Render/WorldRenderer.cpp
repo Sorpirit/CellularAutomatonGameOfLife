@@ -3,7 +3,7 @@
 
 namespace Render
 {
-	WorldRenderer::WorldRenderer(Core::World* world, Shader& shader)
+	WorldRenderer::WorldRenderer(Core::WorldBase* world, Shader& shader)
 		: _world(world)
 	{
 		_shader = shader;
@@ -16,8 +16,6 @@ namespace Render
 
 	void WorldRenderer::Render()
 	{
-        
-
         _shader.Use();
         _shader.SetInteger("image", 0);
         _shader.SetVector3f("spriteColor", {1, 1, 1});
@@ -39,7 +37,9 @@ namespace Render
         _outputTexture.Filter_Min = GL_NEAREST;
         _outputTexture.Internal_Format = GL_R8UI;
         _outputTexture.Image_Format = GL_RED_INTEGER;
-        _outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
+        auto buffer = _world->GetCurrentBuffer();
+        int d = _world->GetWidth();
+        _outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), buffer);
         
 
         // configure VAO/VBO
