@@ -11,9 +11,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // The Width of the screen
-const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_WIDTH = 2000;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 800;
+const unsigned int SCREEN_HEIGHT = 2000;
 
 Core::Simulator GameOfLife(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
     // -------------------
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
+    float fpsCounterTimer = 0;
+    int frameCounter = 0;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -64,6 +66,18 @@ int main(int argc, char* argv[])
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        frameCounter++;
+        fpsCounterTimer += deltaTime;
+        if(fpsCounterTimer >= 0.1)
+        {
+            float fps = (1.0f / fpsCounterTimer) * frameCounter;
+            float msPreFrame = (fpsCounterTimer / frameCounter) * 1000;
+            std::string newTitle = "GameOfLife - " + std::to_string(fps) + "FPS / " + std::to_string(msPreFrame) + "ms";
+            glfwSetWindowTitle(window, newTitle.c_str());
+            frameCounter = 0;
+            fpsCounterTimer = 0;
+        }
+
         glfwPollEvents();
 
         // manage user input

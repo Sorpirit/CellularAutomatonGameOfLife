@@ -107,6 +107,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\GLFW\include;$(SolutionDir)Dependancies\GLAD\include;$(SolutionDir)Dependancies\GLM\include;$(SolutionDir)Dependancies\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +127,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\GLFW\include;$(SolutionDir)Dependancies\GLAD\include;$(SolutionDir)Dependancies\GLM\include;$(SolutionDir)Dependancies\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

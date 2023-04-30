@@ -2,13 +2,17 @@
 #include <cstdlib>
 #include <iostream>
 #include <tuple>
+#include <future>
+#include <omp.h>
 #include "World.cpp"
 
 using namespace std;
 
+//#define DETERMENISTIC
+
 namespace Core
 {
-    static tuple<int, int> neighborDirections[] = {
+    static const tuple<int, int> neighborDirections[] = {
 	    make_tuple(-1, 1),
 	    make_tuple(0, 1),
 	    make_tuple(1, 1),
@@ -19,14 +23,12 @@ namespace Core
 	    make_tuple(-1, 0),
     };
 
+    static const Cell fullCell{ UCHAR_MAX };
+    static const Cell emptyCell{ 0 };
+
     Simulator::Simulator(unsigned int width, unsigned int height)
-        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(100, 100), _generationTimer(0)
+        : State(SIMULATION_RUNNING), Keys(), Width(width), Height(height), _world(1000, 1000), _generationTimer(0)
     {
-        Cell fullCell { UCHAR_MAX };
-        Cell emptyCell { 0 };
-
-        
-
         /*for (int i = 0; i < _world.GetWidth(); ++i)
         {
             for (int j = 0; j < _world.GetHeight(); ++j)
@@ -73,15 +75,18 @@ namespace Core
         _generationTimer = 0;
         _world.Swap();
 
-        Cell fullCell{ UCHAR_MAX };
-        Cell emptyCell{ 0 };
-        int neighborAmount = 0;
 
+#ifndef DETERMENISTIC
+#pragma omp parallel for num_threads(8)
+#endif
         for (int i = 0; i < _world.GetWidth(); ++i)
         {
+#ifndef DETERMENISTIC
+#pragma omp parallel for num_threads(8)
+#endif
             for (int j = 0; j < _world.GetHeight(); ++j)
             {
-                neighborAmount = 0;
+                int neighborAmount = 0;
                 for (const auto& dir : neighborDirections) {
                     int neighborX = i + std::get<0>(dir);
                     int neighborY = j + std::get<1>(dir);
@@ -116,6 +121,8 @@ namespace Core
                 }
             }
         }
+
+
     }
 
     void Simulator::ProcessInput(float dt)
