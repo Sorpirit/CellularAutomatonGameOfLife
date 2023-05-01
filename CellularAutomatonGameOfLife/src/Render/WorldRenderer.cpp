@@ -21,14 +21,21 @@ namespace Render
         _shader.Use();
         _shader.SetInteger("image", 0);
         _shader.SetVector3f("spriteColor", {1, 1, 1});
-
-        //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        _shader.SetVector2f("spriteDimensions", { _world->GetWidth(), _world->GetHeight()});
+        _shader.SetFloat("edgeThickness", 0.05f);
+        _shader.SetVector3f("edgeColor", _gridEnable ? glm::vec3(0.4, 0.4, 0.4f) : glm::vec3(0,0,0));
+        
         glActiveTexture(GL_TEXTURE0);
         _outputTexture.Bind();
         
 		glBindVertexArray(_quadVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
+	}
+
+	void WorldRenderer::EnableGrid(bool enable)
+	{
+        _gridEnable = enable;
 	}
 
 	void WorldRenderer::initRenderData()

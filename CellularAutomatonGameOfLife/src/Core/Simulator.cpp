@@ -33,7 +33,7 @@ namespace Core
     static const Cell emptyCell{ 0 };
 
     Simulator::Simulator(unsigned int width, unsigned int height)
-        : State(SIMULATION_PAUSED), Keys(), Width(width), Height(height), _world(100, 100), _generationTimer(0)
+        : State(SIMULATION_PAUSED), Keys(), Width(width), Height(height), _world(50, 50), _generationTimer(0)
     {
         GenerateRandomMap();
     }
@@ -161,6 +161,13 @@ namespace Core
         {
             _generateMap = true;
         }
+
+    	if (Keys[GLFW_KEY_1] == KEY_PRESSED)
+        {
+            _showDebugGrid = !_showDebugGrid;
+            _render->EnableGrid(_showDebugGrid);
+        }
+        
 
         if(rightMouseButton == KEY_DOWN)
         {

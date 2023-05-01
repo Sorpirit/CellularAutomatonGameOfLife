@@ -35,6 +35,7 @@ namespace Core
         bool _generateMap;
         bool _clearMap;
 
+        bool _showDebugGrid;
 
         bool _cursorPlacePlaceCell;
         bool _cursorRemovePlaceCell;
