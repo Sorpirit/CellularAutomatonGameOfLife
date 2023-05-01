@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Cell.hpp" />
+    <ClInclude Include="src\Core\KeyPress.hpp" />
     <ClInclude Include="src\Core\Simulator.hpp" />
     <ClInclude Include="src\Core\SimulatorState.h" />
     <ClInclude Include="src\Core\World.hpp" />

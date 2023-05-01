@@ -9,11 +9,13 @@
 // GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
+void cursor_callback(GLFWwindow* window, double xPos, double yPos);
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
 
 // The Width of the screen
-const unsigned int SCREEN_WIDTH = 2000;
+const unsigned int SCREEN_WIDTH = 1000;
 // The height of the screen
-const unsigned int SCREEN_HEIGHT = 2000;
+const unsigned int SCREEN_HEIGHT = 1000;
 
 Core::Simulator GameOfLife(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -39,6 +41,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    glfwSetCursorPosCallback(window, cursor_callback);
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -90,7 +94,10 @@ int main(int argc, char* argv[])
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        if(GameOfLife.State == Core::SIMULATION_PAUSED)
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        else
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         GameOfLife.Render();
 
@@ -113,9 +120,34 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            GameOfLife.Keys[key] = true;
+            GameOfLife.Keys[key] = KEY_PRESSED;
         else if (action == GLFW_RELEASE)
-            GameOfLife.Keys[key] = false;
+            GameOfLife.Keys[key] = KEY_RELEASED;
+    }
+}
+
+void cursor_callback(GLFWwindow* window, double xPos, double yPos)
+{
+    GameOfLife.cursorWindowX = glm::clamp(xPos, 0.0, static_cast<double>(SCREEN_WIDTH));
+    GameOfLife.cursorWindowY = glm::clamp(yPos, 0.0, static_cast<double>(SCREEN_HEIGHT));
+}
+
+void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
+{
+    if(button == GLFW_MOUSE_BUTTON_RIGHT)
+    {
+        if (action == GLFW_PRESS)
+            GameOfLife.rightMouseButton = KEY_PRESSED;
+        else if (action == GLFW_RELEASE)
+            GameOfLife.rightMouseButton = KEY_RELEASED;
+    }
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT)
+    {
+        if (action == GLFW_PRESS)
+            GameOfLife.leftMouseButton = KEY_PRESSED;
+        else if (action == GLFW_RELEASE)
+            GameOfLife.leftMouseButton= KEY_RELEASED;
     }
 }
 
