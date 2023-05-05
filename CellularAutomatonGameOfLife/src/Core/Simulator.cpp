@@ -45,11 +45,16 @@ namespace Core
 
     void Simulator::Init()
     {
-        auto vertexShaderPath = R"(C:\Users\daniel.vozovikov\Documents\Projects\Learning\C++\Dev\CellularAutomatonGameOfLife\CellularAutomatonGameOfLife\src\Render\Shaders\vertex.vs)";
+        auto vertexShaderPath = R"(C:\Users\daniel.vozovikov\Documents\Projects\Learning\C++\Dev\CellularAutomatonGameOfLife\CellularAutomatonGameOfLife\src\Render\Shaders\vertex.vert)";
         auto fragmentShaderPath = R"(C:\Users\daniel.vozovikov\Documents\Projects\Learning\C++\Dev\CellularAutomatonGameOfLife\CellularAutomatonGameOfLife\src\Render\Shaders\fragment.frag)";
-	    Render::ResourceManager::LoadShader(vertexShaderPath, fragmentShaderPath, nullptr, "sprite");
+        auto computeShaderPath = R"(C:\Users\daniel.vozovikov\Documents\Projects\Learning\C++\Dev\CellularAutomatonGameOfLife\CellularAutomatonGameOfLife\src\Render\Shaders\compute.comp)";
+
+    	Render::ResourceManager::LoadShader(vertexShaderPath, fragmentShaderPath, nullptr, "sprite");
+    	Render::ResourceManager::LoadShader(computeShaderPath, "world");
+
         auto shader = Render::ResourceManager::GetShader("sprite");
-    	_render = new Render::WorldRenderer(&_world, shader);
+        auto compute = Render::ResourceManager::GetComputeShader("world");
+    	_render = new Render::WorldRenderer(&_world, shader, compute);
     }
 
     void Simulator::Update(float dt)

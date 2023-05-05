@@ -3,10 +3,11 @@
 
 namespace Render
 {
-	WorldRenderer::WorldRenderer(Core::WorldBase* world, Shader& shader)
+	WorldRenderer::WorldRenderer(Core::WorldBase* world, Shader& shader, ComputeShader& compute)
 		: _world(world)
 	{
 		_shader = shader;
+        _compute = compute;
 		initRenderData();
 	}
 
@@ -16,7 +17,26 @@ namespace Render
 
 	void WorldRenderer::Render()
 	{
-        _outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
+        glActiveTexture(GL_TEXTURE1);
+        _outputTexture->Generate(_world->GetWidth(), _world->GetHeight(), nullptr);
+
+        glActiveTexture(GL_TEXTURE0);
+        _readTexture->Bind();
+        glBindImageTexture(0, _readTexture->ID, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R8UI);
+
+        glActiveTexture(GL_TEXTURE1);
+        _outputTexture->Bind();
+        glBindImageTexture(1, _outputTexture->ID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R8UI);
+
+        _compute.Use();
+        _compute.SetVector2i("dimensions", _world->GetWidth(), _world->GetHeight());
+        glDispatchCompute(static_cast<unsigned int>(_world->GetWidth()), static_cast<unsigned int>(_world->GetHeight()), 1);
+
+        // make sure writing to image has finished before read
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+        glActiveTexture(GL_TEXTURE0);
+        _outputTexture->Bind();
 
         _shader.Use();
         _shader.SetInteger("image", 0);
@@ -25,12 +45,15 @@ namespace Render
         _shader.SetFloat("edgeThickness", 0.05f);
         _shader.SetVector3f("edgeColor", _gridEnable ? glm::vec3(0.4, 0.4, 0.4f) : glm::vec3(0,0,0));
         
-        glActiveTexture(GL_TEXTURE0);
-        _outputTexture.Bind();
+        
         
 		glBindVertexArray(_quadVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
+
+        auto tmpPointer = _readTexture;
+        _readTexture = _outputTexture;
+        _outputTexture = tmpPointer;
 	}
 
 	void WorldRenderer::EnableGrid(bool enable)
@@ -40,14 +63,23 @@ namespace Render
 
 	void WorldRenderer::initRenderData()
 	{
-        _outputTexture.Wrap_S = GL_CLAMP_TO_BORDER;
-        _outputTexture.Wrap_T = GL_CLAMP_TO_BORDER;
-        _outputTexture.Filter_Max = GL_NEAREST;
-        _outputTexture.Filter_Min = GL_NEAREST;
-        _outputTexture.Internal_Format = GL_R8UI;
-        _outputTexture.Image_Format = GL_RED_INTEGER;
-        //_outputTexture.Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
+        _outputTexture = new Texture2D();
+        _outputTexture->Wrap_S = GL_CLAMP_TO_BORDER;
+        _outputTexture->Wrap_T = GL_CLAMP_TO_BORDER;
+        _outputTexture->Filter_Max = GL_NEAREST;
+        _outputTexture->Filter_Min = GL_NEAREST;
+        _outputTexture->Internal_Format = GL_R8UI;
+        _outputTexture->Image_Format = GL_RED_INTEGER;
+
+        _readTexture = new Texture2D();
+        _readTexture->Wrap_S = GL_CLAMP_TO_BORDER;
+        _readTexture->Wrap_T = GL_CLAMP_TO_BORDER;
+        _readTexture->Filter_Max = GL_NEAREST;
+        _readTexture->Filter_Min = GL_NEAREST;
+        _readTexture->Internal_Format = GL_R8UI;
+        _readTexture->Image_Format = GL_RED_INTEGER;
         
+        _readTexture->Generate(_world->GetWidth(), _world->GetHeight(), _world->GetCurrentBuffer());
 
         // configure VAO/VBO
         unsigned int VBO;

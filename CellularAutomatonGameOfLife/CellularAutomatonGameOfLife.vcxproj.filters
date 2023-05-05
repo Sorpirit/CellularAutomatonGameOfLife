@@ -45,6 +45,9 @@
     <ClCompile Include="src\Render\WorldRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Render\ComputeShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Simulator.hpp">
@@ -77,9 +80,15 @@
     <ClInclude Include="src\Core\KeyPress.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Render\ComputeShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Render\Shaders\compute.comp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Render\Shaders\vertex.vs" />
+    <None Include="src\Render\Shaders\vertex.vert" />
     <None Include="src\Render\Shaders\fragment.frag" />
   </ItemGroup>
 </Project>

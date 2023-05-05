@@ -1,0 +1,77 @@
+#version 430
+
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+uniform layout(r8ui, binding = 0) readonly uimage2D imgInput;
+uniform layout(r8ui, binding = 1) writeonly uimage2D imgOutput;
+
+uniform layout (location = 0) ivec2 dimensions;  
+
+#define NeighborsCount 8
+
+
+const ivec2 NeighborDirections[] = ivec2[](
+	ivec2(-1, 1),
+	ivec2(0, 1),
+	ivec2(1, 1),
+	ivec2(1, 0),
+	ivec2(1, -1),
+	ivec2(0, -1),
+	ivec2(-1, -1),
+	ivec2(-1, 0)
+);
+
+uint ReadCell(ivec2 coords)
+{
+	int x = int(mod(coords.x, dimensions.x));
+	int y = int(mod(coords.y, dimensions.y));
+
+	if (x < 0)
+		x = dimensions.x + x;
+
+	if (y < 0)
+		y = dimensions.y + y;
+
+	return imageLoad(imgInput, ivec2(x, y)).r;
+}
+
+void main() {
+    ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+	
+	int aliveNeighbors = 0;
+
+	uint nb = 0;
+	for(int i=0; i< int(NeighborsCount); ++i)
+	{
+		nb = ReadCell(texelCoord + NeighborDirections[i]);
+		if(nb != 0)
+			aliveNeighbors++;
+	}
+
+	uint value = ReadCell(texelCoord);
+	if(value != 0)
+    {
+        if (aliveNeighbors >= 2 && aliveNeighbors <= 3)
+        {
+            value = 255;
+        }
+        else
+        {
+            value = 0;
+        }
+    }
+    else
+    {
+        if (aliveNeighbors == 3)
+        {
+            value = 255;
+        }
+        else
+        {
+            value = 0;
+        }
+    }
+
+    
+    imageStore(imgOutput, texelCoord, ivec4(value));
+}

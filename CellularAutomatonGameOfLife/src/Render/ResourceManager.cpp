@@ -12,6 +12,7 @@ namespace Render
 	// Instantiate static variables
 	std::map<std::string, Texture2D>    ResourceManager::Textures;
 	std::map<std::string, Shader>       ResourceManager::Shaders;
+	std::map<std::string, ComputeShader>       ResourceManager::ComputeShaders;
 
 
 	Shader ResourceManager::LoadShader(const char* vShaderFile, const char* fShaderFile, const char* gShaderFile, std::string name)
@@ -20,9 +21,20 @@ namespace Render
 		return Shaders[name];
 	}
 
+	ComputeShader ResourceManager::LoadShader(const char* computeShader, std::string name)
+	{
+		ComputeShaders[name] = loadShaderFromFile(computeShader);
+		return ComputeShaders[name];
+	}
+
 	Shader ResourceManager::GetShader(std::string name)
 	{
 		return Shaders[name];
+	}
+
+	ComputeShader ResourceManager::GetComputeShader(std::string name)
+	{
+		return ComputeShaders[name];
 	}
 
 	Texture2D ResourceManager::LoadTexture(const char* file, bool alpha, std::string name)
@@ -87,6 +99,31 @@ namespace Render
 		// 2. now create shader object from source code
 		Shader shader;
 		shader.Compile(vShaderCode, fShaderCode, gShaderFile != nullptr ? gShaderCode : nullptr);
+		return shader;
+	}
+
+	ComputeShader ResourceManager::loadShaderFromFile(const char* computeShaderFile)
+	{
+		std::string computeShaderCode;
+		try
+		{
+			// open files
+			std::ifstream shaderFile(computeShaderFile);
+			std::stringstream shaderStream;
+			// read file's buffer contents into streams
+			shaderStream << shaderFile.rdbuf();
+			// close file handlers
+			shaderFile.close();
+			// convert stream into string
+			computeShaderCode = shaderStream.str();
+		}
+		catch (std::exception e)
+		{
+			std::cout << "ERROR::SHADER: Failed to read shader files" << std::endl;
+		}
+		const char* vShaderCode = computeShaderCode.c_str();
+		ComputeShader shader;
+		shader.Compile(vShaderCode);
 		return shader;
 	}
 
