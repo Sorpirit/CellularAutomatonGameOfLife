@@ -10,18 +10,15 @@ namespace Render
 	{
 	public:
 
-		WorldRenderer(Core::WorldBase* world, Shader &shader, ComputeShader &compute);
+		WorldRenderer(Shader &shader);
 		~WorldRenderer();
 
-		void Render();
+		void Render(const Texture2D* drawTexture);
 
 		void EnableGrid(bool enable);
+
 	private:
 		Shader _shader;
-		ComputeShader _compute;
-		Core::WorldBase* _world;
-		Texture2D* _outputTexture;
-		Texture2D* _readTexture;
 		unsigned int _quadVAO;
 		bool _gridEnable;
 

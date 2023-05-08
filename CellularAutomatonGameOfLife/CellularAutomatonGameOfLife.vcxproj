@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\GLFW\include;$(SolutionDir)Dependancies\GLAD\include;$(SolutionDir)Dependancies\GLM\include;$(SolutionDir)Dependancies\STB;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\GLFW\include;$(SolutionDir)Dependancies\GLAD\include;$(SolutionDir)Dependancies\GLM\include;$(SolutionDir)Dependancies\STB;$(SolutionDir)\CellularAutomatonGameOfLife\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <OpenMPSupport>true</OpenMPSupport>
@@ -141,23 +141,37 @@
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
     <ClCompile Include="src\ApplicationLoop.cpp" />
-    <ClCompile Include="src\Core\Simulator.cpp" />
     <ClCompile Include="src\Core\SimulatorState.cpp" />
     <ClCompile Include="lib\glad.c" />
     <ClCompile Include="src\Core\World.cpp" />
+    <ClCompile Include="src\GameOfLife\GameOfLifeManager.cpp" />
+    <ClCompile Include="src\GameOfLife\WorldFactory.cpp" />
+    <ClCompile Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPU.cpp" />
+    <ClCompile Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPUMultiThread.cpp" />
+    <ClCompile Include="src\GameOfLife\WorldImplementation\WorldSimulatorGPU.cpp" />
     <ClCompile Include="src\Render\ComputeShader.cpp" />
     <ClCompile Include="src\Render\ResourceManager.cpp" />
     <ClCompile Include="src\Render\Shader.cpp" />
     <ClCompile Include="src\Render\Texture2D.cpp" />
     <ClCompile Include="src\Render\WorldRenderer.cpp" />
+    <ClCompile Include="src\GameOfLife\WorldImplementation\WorldTextureProvider.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Cell.hpp" />
     <ClInclude Include="src\Core\KeyPress.hpp" />
-    <ClInclude Include="src\Core\Simulator.hpp" />
     <ClInclude Include="src\Core\SimulatorState.h" />
     <ClInclude Include="src\Core\World.hpp" />
     <ClInclude Include="src\Core\WorldBase.hpp" />
+    <ClInclude Include="src\Core\WorldSimulator.hpp" />
+    <ClInclude Include="src\GameOfLife\CellDefaults.hpp" />
+    <ClInclude Include="src\GameOfLife\GameOfLifeManager.hpp" />
+    <ClInclude Include="src\GameOfLife\ResourceConstants.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldFactory.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldHelpers.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPU.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPUMultiThread.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldImplementation\WorldSimulatorGPU.hpp" />
+    <ClInclude Include="src\GameOfLife\WorldImplementation\WorldTextureHelper.hpp" />
     <ClInclude Include="src\Render\ComputeShader.hpp" />
     <ClInclude Include="src\Render\ResourceManager.hpp" />
     <ClInclude Include="src\Render\Shader.hpp" />

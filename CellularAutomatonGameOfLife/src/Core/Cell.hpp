@@ -1,6 +1,9 @@
 ﻿#pragma once
 
-struct Cell
+namespace Core
 {
-	unsigned char Data;
-};
+	struct Cell
+	{
+		unsigned char Data;
+	};
+}

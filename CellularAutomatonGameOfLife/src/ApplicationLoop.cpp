@@ -1,25 +1,31 @@
+#include <chrono>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
 
-#include "Core/Simulator.hpp"
-#include "Render/ResourceManager.hpp"
+#include <GameOfLife/GameOfLifeManager.hpp>
+#include <Render/ResourceManager.hpp>
 
-// GLFW function declarations
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void cursor_callback(GLFWwindow* window, double xPos, double yPos);
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
+bool contains(int argc, char** argv, const std::string& value);
+int indexOf(int argc, char** argv, const std::string& value);
+bool tryParseInt(char* str, int& result);
 
-// The Width of the screen
 const unsigned int SCREEN_WIDTH = 1000;
-// The height of the screen
 const unsigned int SCREEN_HEIGHT = 1000;
 
-Core::Simulator GameOfLife(SCREEN_WIDTH, SCREEN_HEIGHT);
+GameOfLife::GameOfLifeManager GameManager(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-int main(int argc, char* argv[])
+bool hasRunOption(int argc, char** argv)
+{
+    return std::find(argv, argv + argc, std::string("-frameCounter")) != argv + argc;
+}
+
+int main(int argc, char** argv)
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -54,12 +60,30 @@ int main(int argc, char* argv[])
 
     // initialize game
     // ---------------
-    GameOfLife.Init();
+    GameManager.Init();
 
     // deltaTime variables
     // -------------------
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
+
+    //tick limiter
+    int timerArgIndex = indexOf(argc, argv, "-tickLimiter");
+    bool tickLimiter = false;
+    float minDeltaTime = 0.05f;
+    if(timerArgIndex != -1)
+    {
+        tickLimiter = true;
+        int minDeltaTimeMs = 200;
+        if(!tryParseInt(argv[timerArgIndex + 1], minDeltaTimeMs))
+        {
+            minDeltaTimeMs = 200;
+        }
+        minDeltaTime = minDeltaTimeMs / 1000.0f;
+    }
+
+    //fps counter
+    bool frameCounterEnable = contains(argc, argv, "-frameCounter");
     float fpsCounterTimer = 0;
     int frameCounter = 0;
 
@@ -70,39 +94,50 @@ int main(int argc, char* argv[])
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        frameCounter++;
-        fpsCounterTimer += deltaTime;
-        if(fpsCounterTimer >= 0.1)
+
+        if(tickLimiter && deltaTime < minDeltaTime)
         {
-            float fps = (1.0f / fpsCounterTimer) * frameCounter;
-            float msPreFrame = (fpsCounterTimer / frameCounter) * 1000;
-            std::string newTitle = "GameOfLife - " + std::to_string(fps) + "FPS / " + std::to_string(msPreFrame) + "ms";
-            glfwSetWindowTitle(window, newTitle.c_str());
-            frameCounter = 0;
-            fpsCounterTimer = 0;
+            int targetMs = static_cast<int>(1000.0f * (minDeltaTime - deltaTime));
+            std::this_thread::sleep_for(std::chrono::milliseconds(targetMs));
+            lastFrame = static_cast<float>(glfwGetTime());
+            deltaTime = minDeltaTime;
         }
 
-        if(frameCounter >= 60)
-            continue;
+        if(frameCounterEnable)
+        {
+            frameCounter++;
+            fpsCounterTimer += deltaTime;
+            if (fpsCounterTimer >= 0.1)
+            {
+                float fps = (1.0f / fpsCounterTimer) * frameCounter;
+                float msPreFrame = (fpsCounterTimer / frameCounter) * 1000;
+                std::string newTitle = "GameOfLife - " + std::to_string(fps) + "FPS / " + std::to_string(msPreFrame) + "ms";
+                glfwSetWindowTitle(window, newTitle.c_str());
+                frameCounter = 0;
+                fpsCounterTimer = 0;
+            }
+        }
+        
 
         glfwPollEvents();
 
         // manage user input
         // -----------------
-        GameOfLife.ProcessInput(deltaTime);
+        GameManager.ProcessInput(deltaTime);
 
         // update game state
         // -----------------
-        GameOfLife.Update(deltaTime);
+        GameManager.Update(deltaTime);
 
         // render
         // ------
-        if(GameOfLife.State == Core::SIMULATION_PAUSED)
+        if(GameManager.State == Core::SIMULATION_PAUSED)
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
         else
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        GameOfLife.Render();
+
+        GameManager.Render();
 
         glfwSwapBuffers(window);
     }
@@ -123,16 +158,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            GameOfLife.Keys[key] = KEY_PRESSED;
+            GameManager.Keys[key] = KEY_PRESSED;
         else if (action == GLFW_RELEASE)
-            GameOfLife.Keys[key] = KEY_RELEASED;
+            GameManager.Keys[key] = KEY_RELEASED;
     }
 }
 
 void cursor_callback(GLFWwindow* window, double xPos, double yPos)
 {
-    GameOfLife.cursorWindowX = glm::clamp(xPos, 0.0, static_cast<double>(SCREEN_WIDTH));
-    GameOfLife.cursorWindowY = glm::clamp(yPos, 0.0, static_cast<double>(SCREEN_HEIGHT));
+    GameManager.CursorWindowX = glm::clamp(xPos, 0.0, static_cast<double>(SCREEN_WIDTH));
+    GameManager.CursorWindowY = glm::clamp(yPos, 0.0, static_cast<double>(SCREEN_HEIGHT));
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
@@ -140,17 +175,17 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
     if(button == GLFW_MOUSE_BUTTON_RIGHT)
     {
         if (action == GLFW_PRESS)
-            GameOfLife.rightMouseButton = KEY_PRESSED;
+            GameManager.RightMouseButton = KEY_PRESSED;
         else if (action == GLFW_RELEASE)
-            GameOfLife.rightMouseButton = KEY_RELEASED;
+            GameManager.RightMouseButton = KEY_RELEASED;
     }
 
     if (button == GLFW_MOUSE_BUTTON_LEFT)
     {
         if (action == GLFW_PRESS)
-            GameOfLife.leftMouseButton = KEY_PRESSED;
+            GameManager.LeftMouseButton = KEY_PRESSED;
         else if (action == GLFW_RELEASE)
-            GameOfLife.leftMouseButton= KEY_RELEASED;
+            GameManager.LeftMouseButton= KEY_RELEASED;
     }
 }
 
@@ -159,4 +194,29 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+bool contains(int size, char** arr, const std::string& value)
+{
+    return std::find(arr, arr + size, value) != arr + size;
+}
+
+
+int indexOf(int size, char** arr, const std::string& value)
+{
+    auto it = std::find(arr, arr + size, value);
+    if (it != arr + size) {
+        return std::distance(arr, it);
+    }
+
+    return -1;
+}
+
+bool tryParseInt(char* str, int& result)
+{
+    std::istringstream iss(str);
+    iss >> result;
+    bool fail = iss.fail();
+    bool eof = iss.eof();
+    return !iss.fail() && iss.eof();
 }

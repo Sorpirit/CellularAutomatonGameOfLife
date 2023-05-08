@@ -7,7 +7,7 @@ namespace Core
 	class World : public WorldBase
 	{
 	public:
-		World(int width, int height);
+		World(unsigned int width,unsigned int height);
 		~World();
 
 		void SetCell(int x, int y, const T data);

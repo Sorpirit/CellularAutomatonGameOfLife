@@ -5,10 +5,15 @@ layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 uniform layout(r8ui, binding = 0) readonly uimage2D imgInput;
 uniform layout(r8ui, binding = 1) writeonly uimage2D imgOutput;
 
-uniform layout (location = 0) ivec2 dimensions;  
+uniform ivec2 dimensions;
+uniform ivec2 placePixel;
+uniform int simulationMode;
 
 #define NeighborsCount 8
 
+#define SIMULATION_RUN 0
+#define SIMULATION_PLACE 1
+#define SIMULATION_REMOVE 2
 
 const ivec2 NeighborDirections[] = ivec2[](
 	ivec2(-1, 1),
@@ -37,41 +42,50 @@ uint ReadCell(ivec2 coords)
 
 void main() {
     ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+	uint value = ReadCell(texelCoord);
 	
-	int aliveNeighbors = 0;
-
-	uint nb = 0;
-	for(int i=0; i< int(NeighborsCount); ++i)
+	if(simulationMode == SIMULATION_PLACE || simulationMode == SIMULATION_REMOVE)
 	{
-		nb = ReadCell(texelCoord + NeighborDirections[i]);
-		if(nb != 0)
-			aliveNeighbors++;
+		if(texelCoord == placePixel)
+		{
+			value = simulationMode == SIMULATION_PLACE ? 255 : 0;
+		}
+	}
+	else if(simulationMode == SIMULATION_RUN)
+	{
+		int aliveNeighbors = 0;
+
+		uint nb = 0;
+		for(int i=0; i< int(NeighborsCount); ++i)
+		{
+			nb = ReadCell(texelCoord + NeighborDirections[i]);
+			if(nb != 0)
+				aliveNeighbors++;
+		}
+
+		if(value != 0)
+		{
+			if (aliveNeighbors >= 2 && aliveNeighbors <= 3)
+			{
+				value = 255;
+			}
+			else
+			{
+				value = 0;
+			}
+		}
+		else
+		{
+			if (aliveNeighbors == 3)
+			{
+				value = 255;
+			}
+			else
+			{
+				value = 0;
+			}
+		}
 	}
 
-	uint value = ReadCell(texelCoord);
-	if(value != 0)
-    {
-        if (aliveNeighbors >= 2 && aliveNeighbors <= 3)
-        {
-            value = 255;
-        }
-        else
-        {
-            value = 0;
-        }
-    }
-    else
-    {
-        if (aliveNeighbors == 3)
-        {
-            value = 255;
-        }
-        else
-        {
-            value = 0;
-        }
-    }
-
-    
     imageStore(imgOutput, texelCoord, ivec4(value));
 }

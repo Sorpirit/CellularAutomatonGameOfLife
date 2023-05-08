@@ -1,20 +1,17 @@
 ﻿#include "World.hpp"
 
-#include <iostream>
 #include <cstring>
 
 namespace Core
 {
 	template<typename T>
-	World<T>::World(int width, int height)
+	World<T>::World(unsigned int width, unsigned int height)
 	{
 		_width = width;
 		_height = height;
 		_stride = sizeof(T);
 		_writeBuffer = new T[width * height];
 		_readBuffer = new T[width * height];
-
-		//todo default init of the buffers
 	}
 
 	template<typename T>
