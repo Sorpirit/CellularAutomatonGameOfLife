@@ -5,6 +5,8 @@
 
 #include <Render/WorldRenderer.hpp>
 
+#include <GameOfLife/PerformanceTest/PerformanceRecorder.hpp>
+
 #include "WorldFactory.hpp"
 
 namespace GameOfLife
@@ -29,6 +31,7 @@ namespace GameOfLife
 		Render::WorldRenderer* _render;
 		WorldFactory* _factory;
 		WorldTextureProvider* _world;
+		PerformanceTest::PerformanceRecorder _prefRecord;
 
 		bool _generateMap;
 		bool _clearMap;
@@ -39,6 +42,6 @@ namespace GameOfLife
 		bool _cursorRemovePlaceCell;
 		int _cursorWorldX, _cursorWorldY;
 
-		const unsigned int _worldWidth, _worldHeigh;
+		const unsigned int _worldWidth, _worldHeight;
 	};
 }

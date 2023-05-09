@@ -63,6 +63,9 @@
     <ClCompile Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPUMultiThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameOfLife\PerformanceTest\PerformanceRecorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\SimulatorState.h">
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\GameOfLife\WorldImplementation\WorldSimulatorCPUMultiThread.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameOfLife\PerformanceTest\PerformanceRecorder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

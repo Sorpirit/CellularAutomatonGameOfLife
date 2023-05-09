@@ -11,7 +11,7 @@ namespace GameOfLife
 	static double my_map(double value, double currentRangeEnd, double targetRangeEnd);
 
 	GameOfLifeManager::GameOfLifeManager(unsigned width, unsigned height) :
-		WindowWidth(width), WindowHeight(height), State(Core::SIMULATION_PAUSED), Keys(), _worldWidth(100), _worldHeigh(100) { }
+        State(Core::SIMULATION_PAUSED), Keys(), WindowWidth(width), WindowHeight(height), _worldWidth(100), _worldHeight(100) { }
 
 	GameOfLifeManager::~GameOfLifeManager()
 	{
@@ -31,7 +31,7 @@ namespace GameOfLife
 
 		_render = new Render::WorldRenderer(textureShader);
 		_factory = new WorldFactory(_render);
-		_world = _factory->CreateWorld(MultiThreadedGPU, _worldWidth, _worldHeigh);
+		_world = _factory->CreateWorld(MultiThreadedGPU, _worldWidth, _worldHeight);
         _world->Init();
         _world->GenerateWorld();
 	}
@@ -130,7 +130,7 @@ namespace GameOfLife
         if (_cursorPlacePlaceCell || _cursorRemovePlaceCell)
         {
             _cursorWorldX = static_cast<int>(my_map(CursorWindowX + .5, WindowWidth, _worldWidth));
-            _cursorWorldY = static_cast<int>(my_map(CursorWindowY + .5, WindowHeight, _worldHeigh));
+            _cursorWorldY = static_cast<int>(my_map(CursorWindowY + .5, WindowHeight, _worldHeight));
             
             _world->SetCell(_cursorWorldX, _cursorWorldY, _cursorPlacePlaceCell ? FullCell : EmptyCell);
             _cursorPlacePlaceCell = false;
@@ -141,7 +141,9 @@ namespace GameOfLife
         if (State == Core::SIMULATION_PAUSED)
             return;
 
+        _prefRecord.begin("UpdateWorld");
         _world->UpdateWorld(dt);
+        _prefRecord.end("UpdateWorld");
 
         if (State == Core::SIMULATION_NEXT)
 			State = Core::SIMULATION_PAUSED;

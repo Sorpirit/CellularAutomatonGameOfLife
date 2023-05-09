@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lib\stb.cpp" />
+    <ClCompile Include="src\GameOfLife\PerformanceTest\PerformanceRecorder.cpp" />
     <ClCompile Include="src\ApplicationLoop.cpp" />
     <ClCompile Include="src\Core\SimulatorState.cpp" />
     <ClCompile Include="lib\glad.c" />
@@ -157,6 +158,7 @@
     <ClCompile Include="src\GameOfLife\WorldImplementation\WorldTextureProvider.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GameOfLife\PerformanceTest\PerformanceRecorder.hpp" />
     <ClInclude Include="src\Core\Cell.hpp" />
     <ClInclude Include="src\Core\KeyPress.hpp" />
     <ClInclude Include="src\Core\SimulatorState.h" />
