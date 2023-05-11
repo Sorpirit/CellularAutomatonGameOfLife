@@ -63,27 +63,13 @@ void main() {
 				aliveNeighbors++;
 		}
 
-		if(value != 0)
+		if(value != 0 && (aliveNeighbors < 2 || aliveNeighbors > 3))
 		{
-			if (aliveNeighbors >= 2 && aliveNeighbors <= 3)
-			{
-				value = 255;
-			}
-			else
-			{
-				value = 0;
-			}
+			value = 0;
 		}
-		else
+		else if(aliveNeighbors == 3)
 		{
-			if (aliveNeighbors == 3)
-			{
-				value = 255;
-			}
-			else
-			{
-				value = 0;
-			}
+			value = 255;
 		}
 	}
 

@@ -5,8 +5,6 @@
 
 #include <GameOfLife/WorldHelpers.hpp>
 
-#include <omp.h>
-
 namespace GameOfLife
 {
 	WorldSimulatorCPU::WorldSimulatorCPU(unsigned int width, unsigned int height, Render::WorldRenderer* render)

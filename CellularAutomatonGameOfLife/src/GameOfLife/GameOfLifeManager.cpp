@@ -11,7 +11,7 @@ namespace GameOfLife
 	static double my_map(double value, double currentRangeEnd, double targetRangeEnd);
 
 	GameOfLifeManager::GameOfLifeManager(unsigned width, unsigned height) :
-        State(Core::SIMULATION_PAUSED), Keys(), WindowWidth(width), WindowHeight(height), _worldWidth(100), _worldHeight(100) { }
+        State(Core::SIMULATION_PAUSED), Keys(), WindowWidth(width), WindowHeight(height), _worldWidth(1500), _worldHeight(1500) { }
 
 	GameOfLifeManager::~GameOfLifeManager()
 	{
@@ -31,8 +31,11 @@ namespace GameOfLife
 
 		_render = new Render::WorldRenderer(textureShader);
 		_factory = new WorldFactory(_render);
-		_world = _factory->CreateWorld(MultiThreadedGPU, _worldWidth, _worldHeight);
+		_world = _factory->CreateWorld(SingleThreadedCPU, _worldWidth, _worldHeight);
         _world->Init();
+#ifdef TESTING_DETERMINISTIC
+        srand(0);
+#endif
         _world->GenerateWorld();
 	}
 

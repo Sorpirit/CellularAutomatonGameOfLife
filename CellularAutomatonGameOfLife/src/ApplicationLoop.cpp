@@ -3,9 +3,12 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <cstdlib>
 
+#include <Core/SimulatorState.h>
 #include <GameOfLife/GameOfLifeManager.hpp>
 #include <Render/ResourceManager.hpp>
+#define TESTING_DETERMINISTIC
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -87,6 +90,14 @@ int main(int argc, char** argv)
     float fpsCounterTimer = 0;
     int frameCounter = 0;
 
+#ifdef TESTING_DETERMINISTIC
+    int testFrameCounter = 1000;
+    frameCounterEnable = false;
+    tickLimiter = false;
+    GameManager.State = Core::GameState::SIMULATION_RUNNING;
+#endif
+
+
     while (!glfwWindowShouldClose(window))
     {
         // calculate delta time
@@ -117,7 +128,6 @@ int main(int argc, char** argv)
                 fpsCounterTimer = 0;
             }
         }
-        
 
         glfwPollEvents();
 
@@ -140,6 +150,12 @@ int main(int argc, char** argv)
         GameManager.Render();
 
         glfwSwapBuffers(window);
+
+#ifdef TESTING_DETERMINISTIC
+        testFrameCounter--;
+        if(testFrameCounter == 0)
+			break;
+#endif
     }
 
     // delete all resources as loaded using the resource manager
