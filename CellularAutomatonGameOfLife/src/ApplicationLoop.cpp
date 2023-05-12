@@ -8,7 +8,7 @@
 #include <Core/SimulatorState.h>
 #include <GameOfLife/GameOfLifeManager.hpp>
 #include <Render/ResourceManager.hpp>
-#define TESTING_DETERMINISTIC
+//#define TESTING_DETERMINISTIC
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);

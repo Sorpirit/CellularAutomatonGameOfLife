@@ -43,5 +43,9 @@ namespace GameOfLife
 		int _cursorWorldX, _cursorWorldY;
 
 		const unsigned int _worldWidth, _worldHeight;
+
+		WorldTextureProvider* InitTest(int seed, ImplementationType testType);
+		void TestingAlgorithms();
+		bool CompareBuffers(const Render::Texture2D* expected, const Render::Texture2D* result);
 	};
 }
